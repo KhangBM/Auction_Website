@@ -1,5 +1,6 @@
 import { Button, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -14,11 +15,14 @@ const LoginPage = () => {
       const credentialsBase64 = btoa(credentials);
 
       // Gửi yêu cầu POST để nhận token
-      const response = await axios.post("https://e-auction-api.up.railway.app/api/token", {
-        grant_type: "password",
-        email: values.email,
-        password: values.password,
-      });
+      const response = await axios.post(
+        "https://e-auction-api.up.railway.app/api/token",
+        {
+          grant_type: "password",
+          email: values.email,
+          password: values.password,
+        }
+      );
 
       console.log("Login Successful", response.data);
 
@@ -54,7 +58,6 @@ const LoginPage = () => {
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-
           autoComplete="off"
           style={{ width: "100%" }}
           className=" flex flex-col gap-4"

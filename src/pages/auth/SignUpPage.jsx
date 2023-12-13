@@ -1,5 +1,7 @@
 import { Button, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 const SignUpPage = () => {
   const navigate = useNavigate();
 
@@ -13,12 +15,15 @@ const SignUpPage = () => {
       const credentialsBase64 = btoa(credentials);
 
       // Gửi yêu cầu POST để nhận token
-      const response = await axios.post("https://e-auction-api.up.railway.app/api/token", {
-        grant_type: "password",
-        email: values.email,
-        fullName: values.fullName,
-        password: values.password,
-      });
+      const response = await axios.post(
+        "https://e-auction-api.up.railway.app/api/token",
+        {
+          grant_type: "password",
+          email: values.email,
+          fullName: values.fullName,
+          password: values.password,
+        }
+      );
 
       console.log("Login Successful", response.data);
 

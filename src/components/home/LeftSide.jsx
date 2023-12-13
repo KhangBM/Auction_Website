@@ -42,18 +42,7 @@ const LeftSide = () => {
         </div>
       </div>
 
-      {/* <div className=" w-full ">
-        <Menu
-          mode="inline"
-          openKeys={openKeys}
-          onOpenChange={onOpenChange}
-          style={{
-            width: 256,
-          }}
-          items={items}
-          className="w-full "
-        />
-      </div> */}
+     
     </div>
   );
 };
