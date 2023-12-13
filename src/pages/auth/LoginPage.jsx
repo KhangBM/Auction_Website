@@ -3,12 +3,42 @@ import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const onFinish = (values) => {
-    console.log("Success:", values);
+
+  const onFinish = async (values) => {
+    try {
+      const Username = "toy_bids";
+      const Password = "abc123";
+      const credentials = `${Username}:${Password}`;
+
+      // Mã hóa thành base64
+      const credentialsBase64 = btoa(credentials);
+
+      // Gửi yêu cầu POST để nhận token
+      const response = await axios.post("https://e-auction-api.up.railway.app/api/token", {
+        grant_type: "password",
+        email: values.email,
+        password: values.password,
+      });
+
+      console.log("Login Successful", response.data);
+
+      // Gửi yêu cầu GET để lấy thông tin người dùng sau khi đã có token
+      const userResponse = await axios.get(URLConstants.USER_URL, {
+        headers: { Authorization: `Basic ${credentialsBase64}` },
+      });
+
+      console.log("User Info", userResponse.data);
+
+      // Điều hướng đến trang "/home" sau khi đã nhận được thông tin người dùng
+      navigate("/home");
+    } catch (error) {
+      console.error("Login Failed", error);
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
   return (
     <div className=" w-[500px] h-[600px] flex flex-col rounded-[49px] pl-10 pr-10 pt-6 pb-6  bg-[#F6FBF9] ">
       <div className=" flex flex-col justify-center items-center gap-2">
@@ -24,6 +54,7 @@ const LoginPage = () => {
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
+
           autoComplete="off"
           style={{ width: "100%" }}
           className=" flex flex-col gap-4"
