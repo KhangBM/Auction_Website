@@ -1,0 +1,38 @@
+.container{
+    width: 100%;
+    height: 650px;
+    margin: 100px 0 0 80px;
+}
+.info{
+    display: flex;
+    justify-content: space-between;
+}
+
+.info h1{
+    font-size: larger;
+}
+
+.body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 500px;
+}
+.body h1{
+    font-size: 35px;
+}
+
+.body .gotohome button{
+    width: 300px;
+    height: 50pxpx;
+    border: 1px solid black;
+    background-color: aquamarine;
+    font-size: 25px;
+    margin-top: 20px;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}

@@ -1,0 +1,21 @@
+.user{
+    width: 80px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid black;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
+.user:hover{
+    border-color: white;
+    color: white;
+    background-color: aqua;
+}

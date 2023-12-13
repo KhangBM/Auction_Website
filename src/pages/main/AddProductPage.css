@@ -1,0 +1,92 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.container{
+    width: 500px;
+    height: 600px;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 100px auto;
+}
+
+.container .container_img{
+    width: 600px;
+    height: 600px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 0 0 100px;
+    gap: 15px;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+.uploaded-images img {
+    width: 100px;
+    height: 100px; 
+    object-fit: cover; 
+    margin-top: 10px;
+}
+.container .container_info{
+    width: 600px;
+    height: 600px;
+    border: 1px solid black;
+    padding: 20px 10px 10px 10px;
+    font-size: 30px;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+/* Trong file CSS của bạn (ví dụ: AddProductPage.css) */
+.upload-button {
+    margin: 100px 0 0 0;
+    width: 150px; /* Điều chỉnh chiều rộng */
+    height: 150px; /* Điều chỉnh chiều cao */
+    font-size: 16px; /* Điều chỉnh kích thước chữ */
+    /* Thêm các thuộc tính CSS khác tùy thuộc vào thiết kế mong muốn của bạn */
+}
+/* CONTAINER_INFO */
+.container_info .product{
+    border: 1px solid black;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.container_info .product_info{
+    height: 250px;
+    border: 1px solid black;
+    margin-bottom: 10px;
+}
+
+.container_info .product_price{
+    border: 1px solid black;
+    margin-bottom: 10px;
+    height: 50px;
+}
+
+.container_info .product_bid{
+    border: 1px solid black;
+    margin-bottom: 10px;
+    height: 50px;
+}
+.container_info .start_date, .end_date, .bid_date{
+    border: 1px solid black;
+    width: 180px;
+}
+.container_info .end_date,.bid_date{
+    margin-left: 18px;
+}
+
+.container_info button{
+    margin: 15px 0 0 15px;
+    width: 550px;
+    background-color: #2b6777;
+}
