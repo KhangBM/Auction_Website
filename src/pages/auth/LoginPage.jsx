@@ -1,5 +1,7 @@
+import { useState } from "react";
+import axios from "axios";
 import { Button, Form, Input } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -16,29 +18,27 @@ const LoginPage = () => {
       // Gửi yêu cầu POST để nhận token
       const response = await axios.post("https://e-auction-api.up.railway.app/api/token", {
         grant_type: "password",
-        email: values.email,
+        username: values.email,
         password: values.password,
-      });
-
-      console.log("Login Successful", response.data);
-
-      // Gửi yêu cầu GET để lấy thông tin người dùng sau khi đã có token
-      const userResponse = await axios.get(URLConstants.USER_URL, {
+      },{
         headers: { Authorization: `Basic ${credentialsBase64}` },
       });
 
-      console.log("User Info", userResponse.data);
+      // Lưu token vào localStorage
+      localStorage.setItem('userToken', response.data.access_token);
 
-      // Điều hướng đến trang "/home" sau khi đã nhận được thông tin người dùng
+      console.log("Login Successful", response.data);
+
       navigate("/home");
     } catch (error) {
       console.error("Login Failed", error);
     }
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-
+ 
   return (
     <div className=" w-[500px] h-[600px] flex flex-col rounded-[49px] pl-10 pr-10 pt-6 pb-6  bg-[#F6FBF9] ">
       <div className=" flex flex-col justify-center items-center gap-2">

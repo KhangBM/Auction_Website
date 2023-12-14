@@ -1,5 +1,7 @@
 import { Button, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 const SignUpPage = () => {
   const navigate = useNavigate();
 
@@ -13,32 +15,24 @@ const SignUpPage = () => {
       const credentialsBase64 = btoa(credentials);
 
       // Gửi yêu cầu POST để nhận token
-      const response = await axios.post("https://e-auction-api.up.railway.app/api/token", {
-        grant_type: "password",
-        email: values.email,
+      const response = await axios.post("https://e-auction-api.up.railway.app/v1/user-account/register", {
         fullName: values.fullName,
+        email: values.email,
         password: values.password,
-      });
-
-      console.log("Login Successful", response.data);
-
-      // Gửi yêu cầu GET để lấy thông tin người dùng sau khi đã có token
-      const userResponse = await axios.get(URLConstants.USER_URL, {
+      },{
         headers: { Authorization: `Basic ${credentialsBase64}` },
       });
 
-      console.log("User Info", userResponse.data);
-
-      // Điều hướng đến trang "/home" sau khi đã nhận được thông tin người dùng
+      console.log("Login Successful", response.data);
+      
       navigate("/home");
     } catch (error) {
       console.error("Login Failed", error);
     }
   };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
+    const onFinishFailed = (errorInfo) => {
+      console.log("Failed:",errorInfo)
+    };
   return (
     <div className=" w-[500px] h-[600px] flex flex-col rounded-[49px] pl-10 pr-10 pt-6 pb-6  bg-[#F6FBF9] justify-between ">
       <div className=" flex flex-col justify-center items-center gap-2">
@@ -64,28 +58,28 @@ const SignUpPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your username!",
+                message: "Please input your email!",
               },
             ]}
           >
             <Input size="large" />
           </Form.Item>
-
           <Form.Item
-            label="Password"
-            name="password"
+            label="Username"
+            name="fullName"
+            style={{width:"100%", fontSize: "16px"}}
             rules={[
               {
                 required: true,
-                message: "Please input your password!",
-              },
+                message: "Please input your username!"
+              }
             ]}
           >
-            <Input.Password size="large" />
+            <Input size="large"></Input>
           </Form.Item>
           <Form.Item
-            label="Retype Password"
-            name="confirmpassword"
+            label="Password"
+            name="password"
             rules={[
               {
                 required: true,
