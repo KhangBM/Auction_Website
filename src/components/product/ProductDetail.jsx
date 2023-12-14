@@ -1,45 +1,43 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import './ProductDetail.css';
 
 const ProductDetail = () => {
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [auctionTime, setAuctionTime] = useState("");
   const [description, setDescription] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [deliveryTime, setDeliveryTime] = useState({ start: "", end: "" });//thời gian giao hàng
 
   useEffect(() => {
     const getProductInfo = async () => {
       try {
-        const response = await axios.get('https://e-auction-api.up.railway.app/v1/auction/get/6992963070230528');
+        const response = await axios.get('https://e-auction-api.up.railway.app/v1/auction/get/6993702382469120');
         const data = response.data.data;
         console.log('data', data)
         if (data) {
           setProductName(data.product.name);
           setProductPrice(data.currentPrice);
           setDescription(data.product.description);
+          setCategoryName(data.product.category.categoryName);
 
-          //time
           const formatDate = (string) => {
             let time = string.split(" ");
             let date = time[0].split("/");
-            console.log(date);
             let day = date[0];
             let month = date[1];
             let year = date[2];
             let timeHour = time[1].split(":");
-            console.log(timeHour);
             let hour = timeHour[0];
             let minute = timeHour[1];
             let second = timeHour[2];
             const result = new Date(year, month - 1, day, hour, minute, second);
-            console.log(result);
             return result;
           };
           
           const auctionEndDate = new Date(formatDate(data.endDate));
           const now = new Date();
-          const timeLeft = auctionEndDate.getTime() - now.getTime(); // Đổi về milliseconds
+          const timeLeft = auctionEndDate.getTime() - now.getTime();
 
           if (timeLeft > 0) {
             const secondsLeft = Math.floor(timeLeft / 1000);
@@ -49,6 +47,32 @@ const ProductDetail = () => {
           } else {
             setAuctionTime('Đã kết thúc');
           }
+
+          // Tính thời gian giao hàng
+          const deliveryStartDate = formatDate(data.delivery.startDate);
+          const deliveryEndDate = formatDate(data.delivery.endDate);
+
+          const deliveryStartOptions = {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          };
+          const deliveryEndOptions = {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          };
+
+          const startDeliveryString = deliveryStartDate.toLocaleDateString(
+            "en-US",
+            deliveryStartOptions
+          );
+          const endDeliveryString = deliveryEndDate.toLocaleDateString(
+            "en-US",
+            deliveryEndOptions
+          );
+
+          setDeliveryTime({ start: startDeliveryString, end: endDeliveryString });
         }
       } catch (error) {
         console.error('Lỗi khi lấy thông tin sản phẩm:', error);
@@ -57,7 +81,7 @@ const ProductDetail = () => {
 
     getProductInfo();
 
-    const interval = setInterval(getProductInfo, 5000);
+    const interval = setInterval(getProductInfo, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -79,7 +103,7 @@ const ProductDetail = () => {
     <div className="w-[600px] h-[600px] flex items-center rounded-[30px] overflow-hidden border border-solid border-black flex-col">
       <div className="relative flex flex-col items-center self-center justify-between w-full h-full p-6">
         <div className="w-full h-auto  font-bold text-black text-4xl text-center tracking-[0] leading-[normal] flex items-center justify-center">
-          Gundam RX-93
+           {productName}
         </div>
         <div className="flex flex-row w-full h-auto gap-2 ">
           <div className="text-4xl font-bold">Current: {productPrice}.vnd</div>
@@ -94,17 +118,14 @@ const ProductDetail = () => {
           <div className="text-2xl font-normal">Today 11:00 PM</div> */}
         </div>
         <div className="flex flex-row items-center w-full h-auto gap-2">
-          <div className="text-lg  font-bold w-[120px]">Category:</div>
-          <div className="text-lg font-normal ">Toy</div>
+          <div className="text-lg  font-bold w-[120px]">Category: {categoryName}</div>
         </div>
         <div className="flex flex-row w-full gap-2 ">
-          <div className="text-lg  font-bold w-[120px]">Delivery:</div>
-          <div className="flex flex-row justify-between gap-1">
-            <div className="text-lg font-normal ">Estimated between</div>
-            <div className="text-lg font-normal ">Wed, Dec 6</div>
-            <div className="text-lg font-normal ">and</div>
-            <div className="text-lg font-normal ">Tue, Dec 19</div>
+        <div className="flex flex-row items-center w-full h-auto gap-2">
+          <div className="text-lg font-bold">
+            Estimated Delivery Time: {deliveryTime.start} - {deliveryTime.end}
           </div>
+        </div>
         </div>
         <div className="flex flex-row items-center w-full h-auto gap-2">
           <div className="text-lg  font-bold w-[120px]">Payments:</div>
