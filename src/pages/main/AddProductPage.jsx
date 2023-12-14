@@ -1,177 +1,141 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Input, Select, Button, DatePicker, Upload, message } from 'antd';
 import axios from 'axios';
 import './AddProductPage.css';
-import { Upload, Input, DatePicker, Button, Select } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
 const AddProductPage = () => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startBidPrice, setStartBidPrice] = useState('');
-  const [startDate, setStartDate] = useState(null);
-  const [bidTime, setBidTime] = useState(null);
-  const [categoryName, setCategoryName] = useState('');
-  const [fileList, setFileList] = useState([]);
-  const [minBidPrice, setMinBidPrice] = useState('');
-
-  const category = ['Anime', 'Guldam'];
-
-  const token = localStorage.getItem('userToken');
-  console.log('Token from localStorage:', token);
-
-  useEffect(() => {
-    console.log('Setting up interceptor...');
-    const axiosInterceptor = axios.interceptors.request.use(
-      (config) => {
-        console.log('Intercepting request...');
-        const token = localStorage.getItem('userToken');
-        if (token) {
-          console.log('Token from localStorage:', token); // Log token ra console
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => {
-        console.error('Interceptor error:', error);
-        return Promise.reject(error);
-      }
-    );
-
-    return () => {
-      axios.interceptors.request.eject(axiosInterceptor);
-    };
-  }, []);
-
-  const handleSubmit = async () => {
-    try {
-      try {
-        const formData = new FormData();
-        fileList.forEach((file, index) => {
-          formData.append(`file${index}`, file); // Đặt tên cho các files
-          formData.append(`type${index}`, 'avatar'); // Gán giá trị 'avatar' cho type
-        });
-  
-        const response = await axios.post(
-          'https://e-auction-api.up.railway.app/v1/file/upload/s3',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-  
-        console.log('Upload Success:', response.data);
-  
-        // Tiếp tục xử lý thông tin sản phẩm và gửi lên server như bạn đã làm trước đó...
-      } catch (error) {
-        console.error('Error uploading files:', error);
-      }
-      
-      // Lưu dữ liệu tập tin đã được upload
-      console.log('Upload Success:', uploadResponse.data);
-
-
-      // Gửi thông tin sản phẩm lên server
-      const productData = {
-        bidTime,
-        description,
-        name,
-        category: categoryName === 'Anime' ? 1 : categoryName === 'Guldam' ? 2 : '', // Dữ liệu động
-        startBidPrice: parseInt(startBidPrice),
-        status: 1,
-        mainImage: fileList[0].url, // Lấy ảnh từ fileList
-        subImage1: fileList[1].url, // Lấy ảnh từ fileList
-        subImage2: fileList[2].url, // Lấy ảnh từ fileList
-        subImage3: fileList[3].url, // Lấy ảnh từ fileList
-      };
-      console.log('Product Data:', productData);
-      const productResponse = await axios.post(
-        'https://e-auction-api.up.railway.app/v1/product/create',
-        productData
-      );
-
-      console.log('Product created successfully:', productResponse.data);
-      const productId = productResponse.data.productId; // Lấy productId sau khi tạo sản phẩm
-
-      // Dữ liệu đấu giá
-      const auctionData = {
-        maxBidders: 100,
-        minBidPrice: parseInt(minBidPrice),
-        productId: productResponse.data.productId,
-        startDate: startDate ? startDate.format('DD/MM/YYYY HH:mm:ss') : null,
-      };
-      console.log('Auction Data:', auctionData);
-      // Gửi request tạo phiên đấu giá
-      const auctionResponse = await axios.post(
-        'https://e-auction-api.up.railway.app/v1/auction/create',
-        auctionData
-      );
-
-      console.log('Auction created successfully:', auctionResponse.data);
-
-      // Xử lý sau khi tạo sản phẩm và phiên đấu giá thành công
-      // Reset state và các giá trị trên form nếu cần
-
-      setName('');
-      setDescription('');
-      setStartBidPrice('');
-      setStartDate(null);
-      setBidTime(null);
-      setCategoryName('');
-      setFileList([]);
-    } catch (error) {
-      console.error('Error creating product:', error);
-    }
-    
+  const [formData, setFormData] = useState({
+    bidTime: '',
+    description: '',
+    name: '',
+    categoryId: null,
+    startBidPrice: null,
+    status: 1,
+    startDate: null,
+    mainImage: '',
+    subImage1: '',
+    subImage2: '',
+    subImage3: '',
+  });
+  //XỬ LÍ THAY ĐỔI DỮ LIỆU TRONG FORM
+  const handleChange = (key, value) => {
+    setFormData({ ...formData, [key]: value });
   };
 
-  const uploadProps = {
-    onRemove: (file) => {
-      const index = fileList.indexOf(file);
-      const newFileList = fileList.slice();
-      newFileList.splice(index, 1);
-      setFileList(newFileList);
-    },
-    beforeUpload: (file) => {
-      if (fileList.length >= 4) {
-        console.log('Chỉ được phép tải lên tối đa 4 tập tin.');
-        return false;
-      }
-      setFileList([...fileList, file]);
-      return false;
-    },
-    fileList,
+  const handleDateChange = (date, dateString) => {
+    setFormData({ ...formData, startDate: dateString });
+  };
+  //HÀM LẤY TOKEN TỪ LOCALSTRONGE
+  const getTokenFromLocalStorage = () => {
+    return localStorage.getItem('userToken'); // Thay your_token_key bằng key bạn đã sử dụng để lưu token trong localStorage
+  };
+  //HÀM XỬ LÍ VÀ UPLOAD ẢNH
+  const handleImageUpload = async (file, key) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'avatar');
+
+    try {
+      const response = await axios.post('https://e-auction-api.up.railway.app/v1/file/upload/s3', formData,{
+        headers:{
+          Authorization: `Bearer ${getTokenFromLocalStorage()}`, // Sử dụng token từ localStorage
+        }
+      });
+      const imageUrl = response.data.url;
+      setFormData({ ...formData, [key]: imageUrl });
+      message.success('Upload ảnh thành công!');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      message.error('Đã xảy ra lỗi khi upload ảnh!');
+    }
+  };
+  //HÀM XỬ LÍ KHI NHẤN SUBMIT
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Gửi formData lên server hoặc thực hiện các hành động cần thiết ở đây
+    try{
+      //LẤY HÌNH ẢNH UPLOAD
+      const mainImageUrl = formData.mainImage ? formData.mainImage:'';
+      const subImageUrl = [formData.subImage1, formData.subImage2, formData.subImage3].filter(url => !!url); //danh sách ảnh phụ
+
+      // Tạo dữ liệu sản phẩm với các URL hình ảnh đã được upload
+      const productData = {
+        bidTime: formData.bidTime,
+        description: formData.description,
+        name: formData.name,
+        categoryId: formData.categoryId,
+        startBidPrice: formData.startBidPrice,
+        status: formData.status,
+        startDate: formData.startDate,
+        mainImage: mainImageUrl,
+        subImage1: subImageUrls.length > 0 ? subImageUrls[0] : '',
+        subImage2: subImageUrls.length > 1 ? subImageUrls[1] : '',
+        subImage3: subImageUrls.length > 2 ? subImageUrls[2] : '',
+      };
+      //TẠO SẢN PHẨM 
+      const productResponse = await axios.post('https://e-auction-api.up.railway.app/v1/product/create', productData,{
+        headers: {
+          Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+        }
+      });
+      console.log('Sản phẩm đã được tạo:', productResponse.data);
+      message.success('Tạo sản phẩm thành công!');
+      //SỬ DỤNG RESPONSE API ĐỂ LẤY ID TỪ PRODUCT
+      const productId = productResponse.data.id;
+      //TẠO ĐẤU GIÁ VỚI ID VỪA LẤY CỦA SẢN PHẨM
+      const auctionData = {
+        maxBidder: 100,
+        minBidPrice: 10000,
+        productId: productId,
+        startDate: formData.startDate,
+      };
+      const auctionResponse = await axios.post('https://e-auction-api.up.railway.app/v1/auction/create', auctionData,{
+        headers: {
+          Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+        }
+      });
+      console.log('đấu giá đã được tạo: ', auctionResponse.data);
+      message.success('Tạo đấu giá thành công!');
+    }catch(error){
+      console.error('Lỗi khi tạo sản phẩm hoặc đấu giá:', error);
+      message.error('Đã xảy ra lỗi khi tạo sản phẩm hoặc đấu giá!');
+    }
+  };
+
+  const customRequest = async ({ file, onSuccess }) => {
+    const key = file.uid === '-1' ? 'mainImage' : `subImage${file.uid.split('-')[1]}`;
+    await handleImageUpload(file, key);
+    onSuccess('ok');
   };
 
   return (
     <div className="container">
       <div className="container_info">
-        <Upload {...uploadProps} className="upload">
-          <Button icon={<UploadOutlined />}>Upload</Button>
-        </Upload>
-        <Input className="product" placeholder="Product Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input.TextArea className="product_info" placeholder="Product Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-        <Input className="product_price" placeholder="Product Price" type="number" value={startBidPrice} onChange={(e) => setStartBidPrice(e.target.value)} />
-        <Input className="bidprice" placeholder="Min Price" type="number" value={minBidPrice} onChange={(e) => setMinBidPrice(e.target.value)} />
-        <DatePicker className="start_date" placeholder="Start Date" value={startDate} onChange={(date) => setStartDate(date)} />
-        <Input className="bid_date" placeholder="Bid Time" value={bidTime} onChange={(e) => setBidTime(e.target.value)} />
-        <Select
-          className="product_type"
-          placeholder="Product Type"
-          value={categoryName}
-          onChange={(value) => setCategoryName(value)}
-        >
-          {category.map(type => (
-            <Option key={type} value={type}>
-              {type}
-            </Option>
-          ))}
-        </Select>
+        <h1>Add Product</h1>
+        <form onSubmit={handleSubmit}>
+          <Input placeholder="Tên Sản Phẩm" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} required />
+          <Input.TextArea placeholder="Thông Tin" value={formData.description} onChange={(e) => handleChange('description', e.target.value)} required />
+          <Input type="number" placeholder="Giá Khởi Điểm" value={formData.startBidPrice} onChange={(e) => handleChange('startBidPrice', e.target.value)} required />
+          <Input type="number" placeholder="Thời Gian Bid" value={formData.bidTime} onChange={(e) => handleChange('bidTime', e.target.value)} required />
+          <Select style={{ width: '100%' }} value={formData.categoryId} onChange={(value) => handleChange('categoryId', value)} required>
+            <Option value={1}>Anime</Option>
+            <Option value={2}>Guldam</Option>
+          </Select>
+          <DatePicker placeholder="Ngày Bắt Đầu Bid" onChange={handleDateChange} style={{ width: '100%' }} required />
 
-        <Button type="primary" onClick={handleSubmit}>Submit</Button>
+          <Upload
+            customRequest={customRequest}
+            listType="picture-card"
+            accept="image/*"
+            maxCount={4}
+          >
+            <Button type="primary">Upload Ảnh</Button>
+          </Upload>
+
+          <Button type="primary" htmlType="submit">Submit</Button>
+        </form>
       </div>
     </div>
   );

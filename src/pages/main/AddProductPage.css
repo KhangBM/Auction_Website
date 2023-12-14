@@ -1,89 +1,29 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 .container{
+    height: 70vh;
+}
+
+.container_info{
     width: 500px;
-    height: 600px;
+    height: 500px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    margin-left: 150px;
+    margin-bottom: 50px;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -ms-border-radius: 30px;
+    -o-border-radius: 30px;
+}
+
+.container_info form{
+    width: 400px;
+    display: flex;
+    flex-direction: column;
     justify-content: space-evenly;
-    margin: 100px auto;
-}
-
-.container .container_info{
-    width: 600px;
-    height: 600px;
-    /* border: 1px solid black; */
-    padding: 10px 10px 10px 10px;
-    font-size: 30px;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -o-border-radius: 10px;
-}
-/* Trong file CSS của bạn (ví dụ: AddProductPage.css) */
-.upload-button {
-    margin: 100px 0 0 0;
-    width: 150px; /* Điều chỉnh chiều rộng */
-    height: 150px; /* Điều chỉnh chiều cao */
-    font-size: 16px; /* Điều chỉnh kích thước chữ */
-    /* Thêm các thuộc tính CSS khác tùy thuộc vào thiết kế mong muốn của bạn */
-}
-/* CONTAINER_INFO */
-.container_info .product{
-    border: 1px solid black;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.container_info .product_info{
-    height: 250px;
-    border: 1px solid black;
-    margin-bottom: 10px;
-}
-
-.container_info .product_price{
-    border: 1px solid black;
-    margin-bottom: 10px;
-    height: 50px;
-}
-
-.container_info .product_bid{
-    border: 1px solid black;
-    margin-bottom: 10px;
-    height: 50px;
-}
-.container_info .start_date, .end_date, .bid_date{
-    border: 1px solid black;
-    width: 180px;
-}
-.container_info .end_date,.bid_date{
-    margin-left: 18px;
-}
-
-.container_info button{
-    margin: 15px 0 0 15px;
-    width: 550px;
-    background-color: #2b6777;
-}
-.container_info .upload{
-    overflow-x: auto;
-    height: 80px;
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.container_info .product_type{
-    width: 180px;
-    border: 1px solid black;
-    color: black;
-    margin-left: 18px;
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+    align-items: center;
+    
 }
